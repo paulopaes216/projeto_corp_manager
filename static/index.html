@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Demo - Gestão de Espaços</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;margin:20px}
+      .card{border:1px solid #ccc;padding:12px;margin:8px;border-radius:6px}
+      table{border-collapse:collapse;width:100%}
+      th,td{border:1px solid #ddd;padding:8px}
+    </style>
+  </head>
+  <body>
+    <h1>Sistema Inteligente de Gestão e Otimização de Espaços - Protótipo</h1>
+    <div class="card">
+      <button id="btnLoad">Carregar dados</button>
+      <button id="btnAllocate">Gerar Alocação Otimizada</button>
+    </div>
+
+    <div class="card">
+      <h2>Salas</h2>
+      <pre id="rooms">-</pre>
+    </div>
+
+    <div class="card">
+      <h2>Equipes</h2>
+      <pre id="teams">-</pre>
+    </div>
+
+    <div class="card">
+      <h2>Resultado da Alocação</h2>
+      <div id="result">-</div>
+    </div>
+
+    <div class="card">
+      <h2>Execuções</h2>
+      <pre id="execs">-</pre>
+    </div>
+
+    <script>
+      document.getElementById('btnLoad').onclick = async ()=>{
+        const r = await fetch('/api/rooms');
+        const rooms = await r.json();
+        document.getElementById('rooms').textContent = JSON.stringify(rooms, null, 2);
+        const t = await fetch('/api/teams');
+        document.getElementById('teams').textContent = JSON.stringify(await t.json(), null, 2);
+      }
+      document.getElementById('btnAllocate').onclick = async ()=>{
+        const r = await fetch('/api/allocate', {method:'POST'});
+        const data = await r.json();
+        document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+        const ex = await fetch('/api/executions');
+        document.getElementById('execs').textContent = JSON.stringify(await ex.json(), null, 2);
+      }
+    </script>
+  </body>
+</html>

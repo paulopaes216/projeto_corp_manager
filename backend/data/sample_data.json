@@ -1,0 +1,22 @@
+{
+  "rooms": [
+    { "id": "Sala-101", "floor": 1, "capacity": 10, "type": "meeting", "resources": ["projector"], "accessible": false, "available": true },
+    { "id": "Sala-102", "floor": 1, "capacity": 30, "type": "training", "resources": ["projector","tv"], "accessible": true, "available": true },
+    { "id": "Sala-201", "floor": 2, "capacity": 20, "type": "project", "resources": [], "accessible": false, "available": true },
+    { "id": "Sala-301", "floor": 3, "capacity": 80, "type": "auditorium", "resources": ["stage","sound"], "accessible": true, "available": true },
+    { "id": "Sala-402", "floor": 4, "capacity": 60, "type": "open", "resources": [], "accessible": false, "available": true },
+    { "id": "Sala-503", "floor": 5, "capacity": 30, "type": "meeting", "resources": ["whiteboard"], "accessible": true, "available": true },
+    { "id": "Sala-702", "floor": 7, "capacity": 20, "type": "project", "resources": [], "accessible": false, "available": true },
+    { "id": "Sala-704", "floor": 7, "capacity": 45, "type": "project", "resources": [], "accessible": false, "available": true }
+  ],
+  "sectors": [
+    { "name": "Tecnologia", "coordinator": "tech-lead", "total": 300 },
+    { "name": "RH", "coordinator": "rh-lead", "total": 120 }
+  ],
+  "teams": [
+    { "id": "Dev-A", "sector": "Tecnologia", "size": 42, "requirements": ["whiteboard"], "priority": 3, "preferred_floor": 7, "needs_accessible": false },
+    { "id": "Dev-B", "sector": "Tecnologia", "size": 18, "requirements": [], "priority": 2, "preferred_floor": 7, "needs_accessible": false },
+    { "id": "RH", "sector": "RH", "size": 28, "requirements": [], "priority": 2, "preferred_floor": 5, "needs_accessible": true },
+    { "id": "Financeiro", "sector": "Financeiro", "size": 54, "requirements": [], "priority": 2, "preferred_floor": 4, "needs_accessible": false }
+  ]
+}
