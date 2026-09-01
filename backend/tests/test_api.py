@@ -1,7 +1,13 @@
+import sys
+import os
+# ensure backend directory is in path so 'main' can be imported when pytest is run from repository root
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
+
 
 def test_allocate_and_endpoints():
     r = client.post('/api/allocate')
@@ -9,6 +15,7 @@ def test_allocate_and_endpoints():
     j = r.json()
     assert 'result' in j
 
+    # explain for an existing team
     r2 = client.get('/api/explain/Dev-A')
     assert r2.status_code == 200
     ej = r2.json()
