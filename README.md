@@ -1,3 +1,5 @@
+[![CI](https://github.com/paulopaes216/projeto_corp_manager/actions/workflows/ci.yml/badge.svg)](https://github.com/paulopaes216/projeto_corp_manager/actions)
+
 # Projeto: Sistema Inteligente de Gestão e Otimização de Espaços Corporativos
 
 Protótipo funcional (MVP) desenvolvido para o desafio ISTQB CT-AI.
@@ -6,7 +8,7 @@ Este repositório contém um backend (FastAPI) com um motor de alocação heurí
 
 Principais componentes:
 - Backend: backend/main.py, backend/engine.py
-- Frontend: static/index.html
+- Frontend: static/index.html, static/dashboard.html
 - Dados de exemplo: backend/data/sample_data.json
 - Testes: tests/test_engine.py
 - CI: .github/workflows/ci.yml
@@ -17,11 +19,12 @@ Como executar (local):
    cd backend
 3. Instale dependências
    python -m venv .venv
-   source .venv/bin/activate  # ou .venv\\Scripts\\activate no Windows
+   source .venv/bin/activate  # ou .venv\Scripts\activate no Windows
    pip install -r requirements.txt
 4. Inicie a API
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
-5. Abra o frontend: abra static/index.html no navegador (ou acesse o servidor se servir estático)
+5. Acesse o dashboard executivo:
+   http://localhost:8000/static/dashboard.html
 
 O motor de alocação gera justificativas, registra execuções em backend/data/executions.json e fornece observabilidade mínima (tempo de execução, contadores).
 

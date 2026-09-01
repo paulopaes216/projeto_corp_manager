@@ -1,0 +1,52 @@
+[
+  {
+    "id": "exec-0001-000",
+    "timestamp": 1693530000.0,
+    "user": "coordenador-geral",
+    "algorithm": "allocation-engine-v1",
+    "teams_analyzed": 4,
+    "rooms_analyzed": 8,
+    "teams_allocated": 4,
+    "teams_unallocated": 0,
+    "violations": 0,
+    "duration_s": 0.042,
+    "result_summary": {
+      "occupancy": 75,
+      "allocated": 4
+    },
+    "allocations_sample": [
+      {
+        "team_id": "Dev-A",
+        "team_size": 42,
+        "room_id": "Sala-704",
+        "room_capacity": 45,
+        "occupancy_pct": 93.3,
+        "justification": "Melhor equilíbrio entre capacidade e preferência de andar (7º)."
+      },
+      {
+        "team_id": "Dev-B",
+        "team_size": 18,
+        "room_id": "Sala-702",
+        "room_capacity": 20,
+        "occupancy_pct": 90.0,
+        "justification": "Sala com capacidade próxima ao tamanho da equipe e no andar preferido."
+      },
+      {
+        "team_id": "RH",
+        "team_size": 28,
+        "room_id": "Sala-503",
+        "room_capacity": 30,
+        "occupancy_pct": 93.3,
+        "justification": "Atende necessidade de acessibilidade e proximidade de recursos."
+      },
+      {
+        "team_id": "Financeiro",
+        "team_size": 54,
+        "room_id": "Sala-402",
+        "room_capacity": 60,
+        "occupancy_pct": 90.0,
+        "justification": "Maior sala disponível que atende capacidade e restrições."
+      }
+    ]
+  }
+]
