@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dashboard - Gestão de Espaços</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;margin:20px}
+      .row{display:flex;gap:16px}
+      .card{border:1px solid #ccc;padding:12px;margin:8px;border-radius:6px;flex:1}
+      pre{height:200px;overflow:auto;background:#fafafa;padding:8px}
+      table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #ddd;padding:6px}
+    </style>
+  </head>
+  <body>
+    <h1>Dashboard Executivo — Gestão de Espaços</h1>
+    <div class="row">
+      <div class="card">
+        <h3>KPI</h3>
+        <div id="kpis">Carregando...</div>
+        <button id="btnRun">Gerar Alocação Otimizada</button>
+      </div>
+      <div class="card">
+        <h3>Comparação: Antes x Depois</h3>
+        <div id="compareSummary">-</div>
+        <h4>Tabela otimizada</h4>
+        <div style="overflow:auto;height:200px"><table id="tableOptim"/></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="card">
+        <h3>Ocupação por Andar (simulação)</h3>
+        <canvas id="chartFloor"></canvas>
+      </div>
+      <div class="card">
+        <h3>Execuções</h3>
+        <pre id="execs">-</pre>
+        <h4>Intervenção manual</h4>
+        <div>
+          <label>Execution ID: <input id="intExec"/></label><br/>
+          <label>Team ID: <input id="intTeam"/></label><br/>
+          <label>Room ID: <input id="intRoom"/></label><br/>
+          <button id="btnIntervene">Submeter Intervenção</button>
+          <pre id="intResp">-</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Salas</h3>
+      <pre id="rooms">-</pre>
+    </div>
+
+    <script>
+      async function loadData(){
+        const rooms = await (await fetch('/api/rooms')).json();
+        const teams = await (await fetch('/api/teams')).json();
+        document.getElementById('rooms').textContent = JSON.stringify(rooms, null, 2);
+        const monitor = await (await fetch('/api/monitor')).json();
+        document.getElementById('execs').textContent = JSON.stringify(monitor, null, 2);
+
+        document.getElementById('kpis').innerHTML = `\nTotal salas: ${rooms.length}\nTotal equipes: ${teams.length}\nExecuções: ${monitor.runs}\nDuração média (s): ${monitor.avg_duration_s.toFixed(3)}\nAlocação média: ${monitor.avg_allocated.toFixed(1)}`
+
+        const comp = await (await fetch('/api/compare')).json();
+        document.getElementById('compareSummary').textContent = `Ocupação (Antes): ${comp.initial.occupancy}% → (Depois): ${comp.optimized.occupancy}% → Δ ${comp.delta.occupancy_diff_pct}%`;
+
+        const table = document.getElementById('tableOptim');
+        table.innerHTML = '<tr><th>Equipe</th><th>Tamanho</th><th>Sala</th><th>Capacidade</th></tr>';
+        for(const r of comp.table_optimized){
+          const row = document.createElement('tr');
+          row.innerHTML = `<td>${r.team_id}</td><td>${r.team_size}</td><td>${r.room_id || '-'}</td><td>${r.room_capacity || '-'}</td>`;
+          table.appendChild(row);
+        }
+
+        const allocRes = await (await fetch('/api/allocate', {method:'POST'})).json();
+        const allocs = allocRes.result.allocations;
+        const floorMap = {};
+        for(const a of allocs){
+          if(a.room){
+            const f = a.room.floor;
+            floorMap[f] = (floorMap[f] || 0) + a.team.size;
+          }
+        }
+        const labels = Object.keys(floorMap).sort((a,b)=>a-b);
+        const data = labels.map(l=>floorMap[l]);
+
+        const ctx = document.getElementById('chartFloor');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{label: 'Pessoas alocadas por andar', data: data, backgroundColor: 'rgba(54,162,235,0.5)'}]
+          }
+        });
+      }
+
+      document.getElementById('btnRun').onclick = async ()=>{
+        const r = await fetch('/api/allocate', {method:'POST'});
+        const data = await r.json();
+        alert('Alocação gerada e registrada. ID: ' + data.record.id);
+        await loadData();
+      }
+
+      document.getElementById('btnIntervene').onclick = async ()=>{
+        const exec = document.getElementById('intExec').value;
+        const team = document.getElementById('intTeam').value;
+        const room = document.getElementById('intRoom').value || null;
+        if(!exec || !team){
+          alert('Informe execution id e team id');
+          return;
+        }
+        const params = new URLSearchParams();
+        params.append('execution_id', exec);
+        params.append('team_id', team);
+        if(room) params.append('room_id', room);
+        params.append('action', 'assign');
+        const resp = await fetch('/api/intervene?'+params.toString(), {method:'POST'});
+        const j = await resp.json();
+        document.getElementById('intResp').textContent = JSON.stringify(j, null, 2);
+        await loadData();
+      }
+
+      loadData();
+    </script>
+  </body>
+</html>
